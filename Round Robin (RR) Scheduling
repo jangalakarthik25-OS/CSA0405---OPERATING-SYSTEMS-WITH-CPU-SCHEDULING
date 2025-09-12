@@ -1,0 +1,47 @@
+#include <stdio.h>
+
+int main() {
+    int n, tq, bt[20], rt[20], wt[20], tat[20];
+    int t = 0, done = 0, i;
+    float avg_wt = 0, avg_tat = 0;
+
+    printf("Enter no. of processes: ");
+    scanf("%d", &n);
+    printf("Enter burst times:\n");
+    for (i = 0; i < n; i++) { scanf("%d", &bt[i]); rt[i] = bt[i]; }
+    printf("Enter time quantum: ");
+    scanf("%d", &tq);
+
+    while (done < n) {
+        for (i = 0; i < n; i++) {
+            if (rt[i] > 0) {
+                if (rt[i] > tq) { t += tq; rt[i] -= tq; }
+                else { t += rt[i]; wt[i] = t - bt[i]; tat[i] = t; rt[i] = 0; done++; }
+            }
+        }
+    }
+
+    printf("\nP\tBT\tWT\tTAT\n");
+    for (i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\n", i+1, bt[i], wt[i], tat[i]);
+        avg_wt += wt[i]; avg_tat += tat[i];
+    }
+    printf("\nAvg WT=%.2f\nAvg TAT=%.2f\n", avg_wt/n, avg_tat/n);
+}
+
+
+OUT[UT :
+Enter no. of processes: 4
+Enter burst times:
+2 5 11 15
+Enter time quantum: 3
+
+P	BT	WT	TAT
+P1	2	0	2
+P2	5	8	13
+P3	11	16	27
+P4	15	18	33
+
+Avg WT=10.50
+Avg TAT=18.75
+
