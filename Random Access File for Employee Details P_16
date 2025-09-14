@@ -1,0 +1,179 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define FILE_NAME "employee.dat"
+
+struct Employee {
+    int id;
+    char name[30];
+    float salary;
+};
+
+void addEmployee() {
+    FILE *fp = fopen(FILE_NAME, "ab");
+    if (!fp) {
+        printf("Error opening file!\n");
+        return;
+    }
+
+    struct Employee emp;
+    printf("Enter Employee ID: ");
+    scanf("%d", &emp.id);
+    printf("Enter Name: ");
+    scanf("%s", emp.name);
+    printf("Enter Salary: ");
+    scanf("%f", &emp.salary);
+
+    fwrite(&emp, sizeof(struct Employee), 1, fp);
+    fclose(fp);
+
+    printf("Employee added successfully.\n");
+}
+
+void displayEmployees() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) {
+        printf("No employee records found.\n");
+        return;
+    }
+
+    struct Employee emp;
+    printf("\nEmployee Details:\n");
+    printf("ID\tName\tSalary\n");
+    printf("-------------------------\n");
+
+    while (fread(&emp, sizeof(struct Employee), 1, fp)) {
+        printf("%d\t%s\t%.2f\n", emp.id, emp.name, emp.salary);
+    }
+
+    fclose(fp);
+}
+
+void updateEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb+");
+    if (!fp) {
+        printf("No employee records found.\n");
+        return;
+    }
+
+    int id;
+    printf("Enter Employee ID to update salary: ");
+    scanf("%d", &id);
+
+    struct Employee emp;
+    int found = 0;
+    while (fread(&emp, sizeof(struct Employee), 1, fp)) {
+        if (emp.id == id) {
+            found = 1;
+            printf("Enter new salary for %s: ", emp.name);
+            scanf("%f", &emp.salary);
+
+            fseek(fp, -sizeof(struct Employee), SEEK_CUR);
+            fwrite(&emp, sizeof(struct Employee), 1, fp);
+            printf("Salary updated successfully.\n");
+            break;
+        }
+    }
+
+    if (!found)
+        printf("Employee with ID %d not found.\n", id);
+
+    fclose(fp);
+}
+
+void searchEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) {
+        printf("No employee records found.\n");
+        return;
+    }
+
+    int id;
+    printf("Enter Employee ID to search: ");
+    scanf("%d", &id);
+
+    struct Employee emp;
+    int found = 0;
+    while (fread(&emp, sizeof(struct Employee), 1, fp)) {
+        if (emp.id == id) {
+            found = 1;
+            printf("\nEmployee Found:\n");
+            printf("ID: %d\nName: %s\nSalary: %.2f\n", emp.id, emp.name, emp.salary);
+            break;
+        }
+    }
+
+    if (!found)
+        printf("Employee with ID %d not found.\n", id);
+
+    fclose(fp);
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\nRandom Access File – Employee Management\n");
+        printf("1. Add Employee\n");
+        printf("2. Display Employees\n");
+        printf("3. Update Employee Salary\n");
+        printf("4. Search Employee\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: addEmployee(); break;
+            case 2: displayEmployees(); break;
+            case 3: updateEmployee(); break;
+            case 4: searchEmployee(); break;
+            case 5: exit(0);
+            default: printf("Invalid choice!\n");
+        }
+    }
+    return 0;
+}
+
+OUTPUT : 
+Random Access File – Employee Management
+1. Add Employee
+2. Display Employees
+3. Update Employee Salary
+4. Search Employee
+5. Exit
+Enter your choice: 1
+Enter Employee ID: 101
+Enter Name: Alice
+Enter Salary: 50000
+Employee added successfully.
+
+Enter your choice: 1
+Enter Employee ID: 102
+Enter Name: Bob
+Enter Salary: 60000
+Employee added successfully.
+
+Enter your choice: 2
+
+Employee Details:
+ID      Name    Salary
+-------------------------
+101     Alice   50000.00
+102     Bob     60000.00
+
+Enter your choice: 3
+Enter Employee ID to update salary: 101
+Enter new salary for Alice: 55000
+Salary updated successfully.
+
+Enter your choice: 4
+Enter Employee ID to search: 101
+
+Employee Found:
+ID: 101
+Name: Alice
+Salary: 55000.00
+
+Enter your choice: 5
+
