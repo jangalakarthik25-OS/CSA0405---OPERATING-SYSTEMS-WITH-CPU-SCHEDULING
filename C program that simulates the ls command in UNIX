@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    DIR *dp;
+    struct dirent *entry;
+    char *dirname;
+
+    if (argc > 1)
+        dirname = argv[1];
+    else
+        dirname = ".";
+
+    dp = opendir(dirname);
+    if (dp == NULL) {
+        perror("opendir");
+        return 1;
+    }
+
+    printf("Contents of directory '%s':\n", dirname);
+    while ((entry = readdir(dp)) != NULL) {
+        printf("%s  ", entry->d_name);
+    }
+    printf("\n");
+
+    closedir(dp);
+    return 0;
+}
+
+OUTPUT : 
+Contents of directory '.':
+.  ..  .bash_logout  .bashrc  .profile  
