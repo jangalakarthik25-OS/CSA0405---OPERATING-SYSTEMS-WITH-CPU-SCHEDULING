@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+void *threadFunc(void *arg) {
+    long id = (long)arg;
+    printf("Thread %ld started.\n", id);
+    sleep(1); 
+    printf("Thread %ld exiting.\n", id);
+    pthread_exit((void *)id); 
+}
+
+int main() {
+    pthread_t t1, t2;
+    void *retval1, *retval2;
+
+    pthread_create(&t1, NULL, threadFunc, (void *)1);
+    pthread_create(&t2, NULL, threadFunc, (void *)2);
+
+
+    pthread_join(t1, &retval1);
+    pthread_join(t2, &retval2);
+    printf("Thread %ld and Thread %ld joined.\n", (long)retval1, (long)retval2);
+
+   
+    if (pthread_equal(t1, t2))
+        printf("Threads t1 and t2 are equal.\n");
+    else
+        printf("Threads t1 and t2 are NOT equal.\n");
+
+  
+    printf("Main thread exiting.\n");
+    pthread_exit(NULL);
+
+    return 0;
+}
+
+OUTPUT : 
+Thread 1 started.
+Thread 2 started.
+Thread 1 exiting.
+Thread 2 exiting.
+Thread 1 and Thread 2 joined.
+Threads t1 and t2 are NOT equal.
+Main thread exiting.
+
