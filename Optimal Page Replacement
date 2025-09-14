@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <limits.h>
+
+int main() {
+    int n, frames;
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+
+    int pages[n];
+    printf("Enter page reference sequence:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &pages[i]);
+
+    printf("Enter number of frames: ");
+    scanf("%d", &frames);
+
+    int frame[frames];
+    for (int i = 0; i < frames; i++) frame[i] = -1; 
+
+    int page_faults = 0;
+
+    printf("\nPage\tFrames\n");
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+
+        for (int j = 0; j < frames; j++) {
+            if (frame[j] == pages[i]) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) { 
+            int replace_index = -1;
+
+            for (int j = 0; j < frames; j++) {
+                if (frame[j] == -1) {
+                    replace_index = j;
+                    break;
+                }
+            }
+
+            if (replace_index == -1) {
+                int farthest = i;
+                int idx_to_replace = -1;
+                for (int j = 0; j < frames; j++) {
+                    int k;
+                    for (k = i + 1; k < n; k++) {
+                        if (frame[j] == pages[k]) break;
+                    }
+                    if (k == n) { 
+                        idx_to_replace = j;
+                        break;
+                    }
+                    if (k > farthest) {
+                        farthest = k;
+                        idx_to_replace = j;
+                    }
+                }
+                replace_index = idx_to_replace;
+            }
+
+            frame[replace_index] = pages[i];
+            page_faults++;
+        }
+
+        printf("%d\t", pages[i]);
+        for (int j = 0; j < frames; j++)
+            if (frame[j] != -1) printf("%d ", frame[j]);
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", page_faults);
+    return 0;
+}
+
+OUTPUT : 
+Enter number of pages: 10
+Enter page reference sequence:
+7 0 7 5 2 1 1 9 8 2
+Enter number of frames: 3
+
+Page	Frames
+7	7 
+0	7 0 
+7	7 0 
+5	7 0 5 
+2	2 0 5 
+1	2 1 5 
+1	2 1 5 
+9	2 9 5 
+8	2 8 5 
+2	2 8 5 
+
+Total Page Faults: 7
