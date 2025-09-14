@@ -1,0 +1,66 @@
+#include <stdio.h>
+
+int main() {
+    int n, frames, i, j, k;
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+
+    int pages[n];
+    printf("Enter page reference sequence:\n");
+    for (i = 0; i < n; i++)
+        scanf("%d", &pages[i]);
+
+    printf("Enter number of frames: ");
+    scanf("%d", &frames);
+
+    int frame[frames];
+    for (i = 0; i < frames; i++) frame[i] = -1; 
+
+    int page_faults = 0;
+    int index = 0; 
+
+    printf("\nPage\tFrames\n");
+    for (i = 0; i < n; i++) {
+        int found = 0;
+        for (j = 0; j < frames; j++) {
+            if (frame[j] == pages[i]) {
+                found = 1; 
+                break;
+            }
+        }
+
+        if (!found) {
+            frame[index] = pages[i];   
+            index = (index + 1) % frames;
+            page_faults++;
+        }
+
+        printf("%d\t", pages[i]);
+        for (k = 0; k < frames; k++)
+            if (frame[k] != -1) printf("%d ", frame[k]);
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", page_faults);
+    return 0;
+}
+
+OUTPUT : 
+Enter number of pages: 10
+Enter page reference sequence:
+9 6 1 8 7 4 2 2 0 7
+Enter number of frames: 3
+
+Page	Frames
+9	9 
+6	9 6 
+1	9 6 1 
+8	8 6 1 
+7	8 7 1 
+4	8 7 4 
+2	2 7 4 
+2	2 7 4 
+0	2 0 4 
+7	2 0 7 
+
+Total Page Faults: 9
