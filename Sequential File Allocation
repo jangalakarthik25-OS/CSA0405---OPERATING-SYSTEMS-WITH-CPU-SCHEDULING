@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_RECORDS 100
+#define MAX_LENGTH 100
+
+int main() {
+    char file[MAX_RECORDS][MAX_LENGTH]; 
+    int n, i, choice;
+
+    printf("Enter number of records in file: ");
+    scanf("%d", &n);
+    getchar(); 
+
+    for (i = 0; i < n; i++) {
+        printf("Enter record %d: ", i + 1);
+        fgets(file[i], MAX_LENGTH, stdin);
+        file[i][strcspn(file[i], "\n")] = '\0'; 
+    }
+
+    while (1) {
+        printf("\n--- File Operations Menu ---\n");
+        printf("1. Display all records\n2. Access a specific record\n3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); 
+
+        if (choice == 1) {
+            printf("\nAll records:\n");
+            for (i = 0; i < n; i++)
+                printf("%d: %s\n", i + 1, file[i]);
+        } else if (choice == 2) {
+            int rec;
+            printf("Enter record number to access (1-%d): ", n);
+            scanf("%d", &rec);
+            getchar();
+            if (rec < 1 || rec > n) {
+                printf("Invalid record number!\n");
+                continue;
+            }
+
+            printf("Accessing record %d sequentially:\n", rec);
+            for (i = 0; i < rec; i++) {
+                printf("%d: %s\n", i + 1, file[i]);
+            }
+        } else if (choice == 3) {
+            printf("Exiting program.\n");
+            break;
+        } else {
+            printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
+
+OUTPUT : 
+Enter number of records in file: 3
+Enter record 1: Rahul
+Enter record 2: Sai
+Enter record 3: Chintu
+
+--- File Operations Menu ---
+1. Display all records
+2. Access a specific record
+3. Exit
+Enter your choice: 1
+
+All records:
+1: Rahul
+2: Sai
+3: Chintu
+
+--- File Operations Menu ---
+1. Display all records
+2. Access a specific record
+3. Exit
+Enter your choice: 2
+Enter record number to access (1-3): 3
+Accessing record 3 sequentially:
+1: Rahul
+2: Sai
+3: Chintu
+
+--- File Operations Menu ---
+1. Display all records
+2. Access a specific record
+3. Exit
+Enter your choice: 2
+Enter record number to access (1-3): 1
+Accessing record 1 sequentially:
+1: Rahul
+
+--- File Operations Menu ---
+1. Display all records
+2. Access a specific record
+3. Exit
+Enter your choice: 3
+Exiting program.
