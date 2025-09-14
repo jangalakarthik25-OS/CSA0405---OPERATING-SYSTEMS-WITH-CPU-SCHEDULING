@@ -1,0 +1,78 @@
+#include <stdio.h>
+
+int main() {
+    int n, frames;
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+
+    int pages[n];
+    printf("Enter page reference sequence:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &pages[i]);
+
+    printf("Enter number of frames: ");
+    scanf("%d", &frames);
+
+    int frame[frames];
+    int time[frames]; 
+    for (int i = 0; i < frames; i++) {
+        frame[i] = -1;
+        time[i] = 0;
+    }
+
+    int page_faults = 0, current_time = 0;
+
+    printf("\nPage\tFrames\n");
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+        for (int j = 0; j < frames; j++) {
+            if (frame[j] == pages[i]) { 
+                found = 1;
+                time[j] = current_time++;
+                break;
+            }
+        }
+
+        if (!found) {
+            int lru_index = 0;
+            int min_time = time[0];
+            for (int j = 1; j < frames; j++) {
+                if (time[j] < min_time) {
+                    min_time = time[j];
+                    lru_index = j;
+                }
+            }
+            frame[lru_index] = pages[i];
+            time[lru_index] = current_time++;
+            page_faults++;
+        }
+
+        printf("%d\t", pages[i]);
+        for (int j = 0; j < frames; j++)
+            if (frame[j] != -1) printf("%d ", frame[j]);
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", page_faults);
+    return 0;
+}
+
+OUTPUT : 
+Enter number of pages: 10
+Enter page reference sequence:
+9 3 9 0 3 4 5 5 1 5
+Enter number of frames: 3
+
+Page	Frames
+9	9 
+3	3 
+9	3 9 
+0	3 9 0 
+3	3 9 0 
+4	3 4 0 
+5	3 4 5 
+5	3 4 5 
+1	1 4 5 
+5	1 4 5 
+
+Total Page Faults: 7
